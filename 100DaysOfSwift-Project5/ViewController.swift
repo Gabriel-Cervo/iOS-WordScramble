@@ -61,7 +61,33 @@ class ViewController: UITableViewController {
         present(alertController, animated: true)
     }
     
-    func submit(_ answer: String) {}
+    func submit(_ answer: String) {
+        let lowerAnswer = answer.lowercased()
+        
+        if isPossible(word: lowerAnswer) &&
+           isOriginal(word: lowerAnswer) &&
+           isReal(word: lowerAnswer) {
+            usedWords.insert(answer, at: 0)
+            
+            let indexPath = IndexPath(row: 0, section: 0) // cria um indice para tableView, sempre no topo
+            
+            // Using insertRows() lets us tell the table view that a new row has been placed at a specific place in the array so that it can animate the new cell appearing. Adding one cell is also significantly easier than having to reload everything with reloadData()
+            tableView.insertRows(at: [indexPath], with: .automatic)
+        }
+    }
+    
+    //MARK: Word check methods
+    func isPossible(word: String) -> Bool {
+        return true
+    }
+
+    func isOriginal(word: String) -> Bool {
+        return true
+    }
+
+    func isReal(word: String) -> Bool {
+        return true
+    }
     
     //MARK: TableView methods
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
