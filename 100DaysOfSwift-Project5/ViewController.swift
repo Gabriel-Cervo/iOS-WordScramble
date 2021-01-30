@@ -20,6 +20,7 @@ class ViewController: UITableViewController {
         }
         
         // Transforma o arquivo txt em uma string para poder ler depois
+        // O "try?" significa -> Roda esse codigo, e me retorna nil se retornar erro
         guard let startWords = try? String(contentsOf: startWordsURL) else {
             print("Can't transform file in string")
             return
@@ -31,6 +32,26 @@ class ViewController: UITableViewController {
         if allWords.isEmpty {
             allWords = ["Potato"]
         }
+        
+        startGame()
+    }
+    
+    func startGame() {
+        title = allWords.randomElement()
+        usedWords.removeAll(keepingCapacity: true)
+        tableView.reloadData()
+    }
+    
+    //MARK: TableView methods
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return usedWords.count
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Word", for: indexPath)
+        cell.textLabel?.text = usedWords[indexPath.row]
+        
+        return cell
     }
 
 
