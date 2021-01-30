@@ -78,15 +78,37 @@ class ViewController: UITableViewController {
     
     //MARK: Word check methods
     func isPossible(word: String) -> Bool {
+        guard var tempWord = title?.lowercased() else { return false }
+        
+        // Check se todas as letras sao usadas, removendo uma a uma da tempWord, se todas forem removidas ao fim do laço, quer dizer que é a mesma palavra, mesmo que em ordens diferentes
+        for letter in word {
+            if let position = tempWord.firstIndex(of: letter) {
+                tempWord.remove(at: position)
+            } else {
+                return false
+            }
+        }
+        
         return true
     }
 
     func isOriginal(word: String) -> Bool {
-        return true
+        return !usedWords.contains(word)
     }
 
+    /**
+     Swift’s strings natively store international characters as individual characters, e.g. the letter “é” is stored as precisely that. However, UIKit was written in Objective-C before Swift’s strings came along, and it uses a different character system called UTF-16 – short for 16-bit Unicode Transformation Format – where the accent and the letter are stored separately.
+
+     It’s a subtle difference, and often it isn’t a difference at all, but it’s becoming increasingly problematic because of the rise of emoji – those little images that are frequently used in messages. Emoji are actually just special character combinations behind the scenes, and they are measured differently with Swift strings and UTF-16 strings: Swift strings count them as 1-letter strings, but UTF-16 considers them to be 2-letter strings. This means if you use count with UIKit methods, you run the risk of miscounting the string length.
+
+     When you’re working with UIKit, SpriteKit, or any other Apple framework, use utf16.count for the character count. If it’s just  own code - i.e. looping over characters and processing each one individually – then use count instead.
+     */
     func isReal(word: String) -> Bool {
-        return true
+        let checker = UITextChecker()
+        let range = NSRange(location: 0, length: word.utf16.count) // de: location, ate: ...
+        let misspelledRange = checker.rangeOfMisspelledWord(in: word, range: range, startingAt: 0, wrap: false, language: "en")
+        
+        return misspelledRange.location == NSNotFound
     }
     
     //MARK: TableView methods
