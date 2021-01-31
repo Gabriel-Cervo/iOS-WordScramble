@@ -16,6 +16,8 @@ class ViewController: UITableViewController {
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(promptForAnswer))
         
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Restart Game", style: .plain, target: self, action: #selector(startGame))
+        
         guard let startWordsURL = Bundle.main.url(forResource: "start", withExtension: "txt") else {
             print("No file found")
             return
@@ -38,9 +40,10 @@ class ViewController: UITableViewController {
         startGame()
     }
     
-    func startGame() {
+    @objc func startGame() {
         title = allWords.randomElement()
         usedWords.removeAll(keepingCapacity: true)
+        
         tableView.reloadData()
     }
     
@@ -113,6 +116,10 @@ class ViewController: UITableViewController {
     }
 
     func isOriginal(word: String) -> Bool {
+        if word == title {
+            return false
+        }
+        
         return !usedWords.contains(word)
     }
 
@@ -123,7 +130,12 @@ class ViewController: UITableViewController {
 
      When you’re working with UIKit, SpriteKit, or any other Apple framework, use utf16.count for the character count. If it’s just  own code - i.e. looping over characters and processing each one individually – then use count instead.
      */
+    
     func isReal(word: String) -> Bool {
+        if word.count < 3 {
+            return false
+        }
+        
         let checker = UITextChecker()
         let range = NSRange(location: 0, length: word.utf16.count) // de: location, ate: ...
         let misspelledRange = checker.rangeOfMisspelledWord(in: word, range: range, startingAt: 0, wrap: false, language: "en")
